@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b0ad6ba5-c7e6-4439-b090-5eb38ec770ef" name="web" url="http://192.168.0.167">
+        <fileTransfer host="192.168.0.167" port="22" rootFolder="/srv/www" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="2f344497-cb61-44e3-8454-55ec6b41b4c7" name="jone-web" url="http://192.168.0.35">
+        <fileTransfer host="192.168.0.35" port="22" rootFolder="/srv" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
