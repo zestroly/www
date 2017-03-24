@@ -1,8 +1,8 @@
 #!/bin/sh
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
-read temp
-data=${temp//\'/\"}
+
+`/home/root/bin/XiXmlDevice get /srv/www/xml/camera.xml > /dev/null`
 
 echo -e "Content-type:text/json \n\n"
 echo ""
-echo `python XmlToJson.py "$data"`
+echo "{\"Msg\":\"update XmlFile ok!\"}"

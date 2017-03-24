@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <HEAD> 
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
-<meta http-equiv="content-encoding" charset="utf-8" />
-<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
-<META HTTP-EQUIV="Expires" CONTENT="0">
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta http-equiv="content-encoding" charset="utf-8" />
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="0">
     <boby sroll="no"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
 <!--link rel="stylesheet" href="../css/lvv.css" type="text/css" media="screen"/ -->
 
 <title>参数设置</title>
@@ -29,161 +30,6 @@
     <div  id="state" ></div>
 
     <script type="text/javascript">
-        function GetDataFromTable()
-        {
-            var jsondata = "";
-            try {
-				var tableDat=document.getElementById("stateconf");
-				var inputDat=tableDat.getElementsByTagName("input");
-				if(tableDat.rows.length<1)
-				{
-					return "";
-				}
-				for(var i=0;i<tableDat.rows.length;i++)
-				{
-					var item_name=tableDat.rows[i].cells[0].innerText;
-					var item_value=inputDat[i].value;
-					var item_note=tableDat.rows[i].cells[2].innerText;
-					jsondata += item_name + "=" + item_value + "             #" + item_note + "&";
-				}
-            } catch (e) {
-                console.log("获取表单中的数据失败");
-                return "";
-            }
-           // console.log("获取表单中的数据成功，data: %s",jsondata);
-            return jsondata;
-        }
-	
-        function submitdata()
-        {            
-            var data = GetDataFromTable();
-            if (data.length > 2)
-            {
-				var datasend = "filename=state&cmd=write&" + data;
-				console.log("提交数据为:%s",datasend);
-                GetCGIdata(datasend);
-            } else {
-                console.log("表单中没有可获取的数据");
-            }
-        }
-
-        function postData(str)
-        {
-
-            console.log(str)
-            GetCGIdata(str);
-        }
-
-        function valueChange(root, parent,current)
-        {
-            str=""
-            str+="{'"
-            str+= root+"':{'"
-            str+= parent+"':{"
-            switch (current.tagName)
-            {
-                case "SELECT":
-                    str += "'Type':'String',"
-                    str += "'Value':'" + current.options[current.selectedIndex].text + "',";
-                    str += "'Combo':'"
-                    for(var i = 0 ; i< current.length ;i++)
-                    {
-                        str += current.childNodes[i].text;
-                        if((i+1)<current.length)
-                            str +=";"
-                    }
-                    str+="'"
-                    break;
-                case "INPUT":
-                    switch(current.type)
-                    {
-                        case "text":
-                            str += "'Type':'String',"
-                            str += "'Value':'" + current.value +"'";
-                            break;
-                        case "checkbox":
-                            str += "'Type':'Bool',"
-                            if(current.checked == true)
-                                str += "'Value':'True'";
-                            else
-                                str += "'Value':'False'";
-                            break;
-                        case "number":
-                            str += "'Type':'Number',"
-                            str += "'Value':'" + current.value +"'";
-                            break;
-                    }
-                    break;
-            }
-            console.log(current.tagName)
-            str+="}}"
-            str+="}"
-
-
-            postData(str);
-        }
-	
-        function PainTable(result)
-        {
-            try {
-                var json = eval("("+result+")");
-                var i = 0;
-                var txt = "";
-                    txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
-
-                txt+="<br>"
-                for(var obj in json)
-                {//{'AnalogControls':{'GainAuto':
-                    txt+="<lable  style='font-size:18px;font-weight:bold;'>"+ obj +"</lable><br>"
-                    for(var childobj in json[obj])
-                    {//GainAuto' GainSelector
-                        txt += "<span>"+"&nbsp" + childobj +":"+ "</span>";
-                        switch(json[obj][childobj]["Type"])
-                        {
-                            case "String":
-
-                                if(json[obj][childobj].hasOwnProperty("Combo"))
-                                {
-                                    txt+="<select   onchange=valueChange('"+obj+"','"+childobj+"',this)>"
-                                    str=json[obj][childobj]["Combo"]; //这是一字符串
-                                    //var strs= new Array(); //定义一数组
-                                    var strs=str.split(";"); //字符分割
-                                    for(var Combstr in strs)
-                                    {
-                                        if(strs[Combstr] == json[obj][childobj]["Value"])
-                                            txt+="<option selected='selected' value="+Combstr+">" + strs[Combstr] + "</option>";
-                                        else
-                                            txt+="<option value="+Combstr+">" + strs[Combstr] + "</option>"
-                                    }
-                                    txt+="</select>"
-                                }else{
-                                    txt+="<input type='text' style='width:100px;overflow-x:visible;overflow-y:visible;' value='"  +json[obj][childobj]["Value"] + "'  onchange=valueChange('"+obj+"','"+childobj+"',this)></input>"
-                                }
-                                txt+="<br>"
-                                break;
-                            case "Number":
-                                txt+="<input type='number'  style='width:120px' value="  +json[obj][childobj]["Value"] + "  onchange=valueChange('"+obj+"','"+childobj+"',this)></input>"
-                                txt+="<br>"
-                                break;
-                            case "Bool":
-                                if(json[obj][childobj]["Value"] == "True")
-                                    txt+="<input type='checkbox' checked=true onchange=valueChange('"+obj+"','"+childobj+"',this)></input>"
-                                else
-                                    txt+="<input type='checkbox' onchange=valueChange('"+obj+"','"+childobj+"',this)></input>"
-                                txt+="<br>"
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                document.getElementById("state").innerHTML = txt;
-            } catch (e) {
-                console.log("json数据转换错误:%s",e);
-            }
-        }
-		
-
         function GetCGIdata(data) 
 		{
             var xmlhttp;
@@ -211,7 +57,190 @@
             console.log("post to web data:"+data)
             xmlhttp.send(data);
         }
-        GetCGIdata("{'data':'No'}");
+       // GetCGIdata("{'data':'No'}");
+        $(document).ready(PostXmlFile);
+
+        function successPostXmlFile()
+        {
+            $.ajax({
+                url:'/xml/camera.xml',
+                type:'POST',
+                dataType:'xml',
+                timeout:1000,
+                cache:false,
+                error:function (xml) {
+                    alert("加载xml文档出错！");
+                },
+                success:GetCameraXmlComplete
+            });
+        }
+
+        function PostXmlFile() {
+            $.ajax({
+                url:'/cgi-bin/xmlParase.sh',
+                type:'POST',
+                dataType:'json',
+                timeout:1000,
+                cache:false,
+                error:function (xml) {
+                    alert("加载xml文档出错！");
+                },
+                success:successPostXmlFile
+            });
+        }
+
+        function CellNodeToHtml(CellNode)
+        {
+            var Htmlstr="<span style='margin-left: 22px;'>"+ CellNode.nodeName + "</span>";
+            if(CellNode.hasAttribute('Type')) {
+                switch (CellNode.attributes["Type"].value) {
+                    case "String":
+                        if(CellNode.hasAttribute("Combo"))
+                        {
+                            Htmlstr+="<select onchange='HasChangeValue(this)'>"
+                            var strs=CellNode.attributes["Combo"].value.split(";"); //这是一字符串,分割
+                            for(var Combstr in strs)
+                            {
+                                if(strs[Combstr] == CellNode.attributes["Value"].value)
+                                    Htmlstr+="<option selected='selected' value="+Combstr+">" + strs[Combstr] + "</option>";
+                                else
+                                    Htmlstr+="<option value="+Combstr+">" + strs[Combstr] + "</option>"
+                            }
+                            Htmlstr+="</select>"
+                        }else{
+                            Htmlstr+="<input type='text'   size=\""+(CellNode.attributes['Value'].value.length-3)+"\"  value='"  +CellNode.attributes['Value'].value +"' onchange='HasChangeValue(this)'"
+                            if(CellNode.hasAttribute('Mode'))
+                                if (CellNode.attributes["Mode"].value == "ReadOnly")
+                                {
+                                    Htmlstr+="  readonly=\"true\" style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
+                                }
+                            Htmlstr+="></input>";
+                        }
+                        break;
+                    case "Number":
+                        Htmlstr+="<input type='number'   style='width:60px' value="  +CellNode.attributes['Value'].value + " onchange='HasChangeValue(this)' ";
+                        if(CellNode.hasAttribute('Mode'))
+                            if (CellNode.attributes["Mode"].value == "ReadOnly")
+                            {
+                                Htmlstr+="  readonly=\"true\" style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
+                            }
+                        Htmlstr+="></input>";
+                        break;
+                    case "Bool":
+                        if(CellNode.attributes['Value'].value == "True")
+                            Htmlstr+="<input type='checkbox' checked=true onchange='HasChangeValue(this)'></input>"
+                        else
+                            Htmlstr+="<input type='checkbox' onchange='HasChangeValue(this)'></input>"
+                        break;
+                    default:
+                        console.log("no this Type:" + CellNode.attributes["Type"].value);
+                }
+            }
+            return Htmlstr;
+        }
+
+        function HasChangeValue(element)
+        {
+            element.parentElement.childNodes[0].textContent
+            element.previousElementSibling.textContent
+            var str = "";
+            str +="<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            str += "<Param ErrorCode=\"0\">\n";
+            str += "\t\t<camera>\n";
+            str += "\t\t\t<" +  element.parentElement.childNodes[0].textContent + ">\n";
+            str += "\t\t\t\t<" +  element.previousElementSibling.textContent + " ";
+            switch (element.tagName)
+            {
+                case "SELECT":
+                    str += "Type=\"String\" "
+                    str += "Value=\"" + element.options[element.selectedIndex].text + "\" ";
+                    str += "Combo=\"";
+                    for(var i = 0 ; i< element.length ;i++)
+                    {
+                        str += element.childNodes[i].text;
+                        if((i+1)<element.length)
+                            str +=";"
+                    }
+                    str+="\""
+                    break;
+                case "INPUT":
+                    switch(element.type)
+                    {
+                        case "text":
+                            str += "Type=\"String\" "
+                            str += "Value=\"" + element.value +"\" ";
+                            break;
+                        case "checkbox":
+                            str += "Type=\"Bool\" "
+                            if(element.checked == true)
+                                str += "Value=\"True\" ";
+                            else
+                                str += "Value=\"False\" ";
+                            break;
+                        case "number":
+                            str += "Type=\"Number\" "
+                            str += "Value=\"" + element.value +"\" ";
+                            break;
+                    }
+                    break;
+            }
+            str +="/>\n";
+
+            str += "\t\t\t</" +  element.parentElement.childNodes[0].textContent + ">\n";
+            str += "\t\t</camera>\n";
+            str += "</Param>\n";
+
+            function postXmlStr(str)
+            {
+                var xmlhttp;
+                if (window.XMLHttpRequest)
+                {// code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp = new XMLHttpRequest();
+                }
+                else
+                {// code for IE6, IE5
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    {
+                        var result = xmlhttp.responseText;
+                        console.log("得到返回数据:%s", result);
+                        PostXmlFile();
+                    }
+                }
+                var url = "/cgi-bin/XmlSettingData.sh";
+                xmlhttp.open("post", url, true);
+                xmlhttp.setRequestHeader("Content-Type", "application/xml; charset=utf-8");
+                console.log("post to web data:"+str)
+                xmlhttp.send(str);
+            }
+            postXmlStr(str);
+        }
+
+        function GetCameraXmlComplete(xml) {
+           // xml.children[0] //param
+           // xml.children[0].children[0] //camera
+           // xml.children[0].children[0].children
+            txt = "";
+            camera = xml.children[0].children[0].children;
+            for (var i=0 ; i < camera.length;i++)
+            {
+                Items = camera[i];
+                txt+="<div ><lable  style='font-size:18px;font-weight:bold;'>"+ Items.nodeName +"</lable><br>"
+                for(var j=0 ; j <Items.children.length; j++ )
+                {
+                    txt +=CellNodeToHtml(Items.children[j]);
+                    txt +="<br>"
+                }
+                txt+="</div>"
+            }
+
+            document.getElementById("state").innerHTML = txt;
+        }
+
+
     </script> 
 </body>
 </html>
