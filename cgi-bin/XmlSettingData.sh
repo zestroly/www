@@ -9,7 +9,7 @@ do
     echo $temp >>$saveTempXmlFile
 done
 
-`/home/root/bin/XiXmlDevice set $saveTempXmlFile > /dev/null`
+`/home/root/bin/XmlDevice set $saveTempXmlFile > /dev/null`
 
 echo -e "Content-type:text/json \n\n"
 echo ""

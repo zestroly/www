@@ -95,42 +95,37 @@
             if(CellNode.hasAttribute('Type')) {
                 switch (CellNode.attributes["Type"].value) {
                     case "String":
-                        if(CellNode.hasAttribute("Combo"))
-                        {
-                            Htmlstr+="<select onchange='HasChangeValue(this)'>"
-                            var strs=CellNode.attributes["Combo"].value.split(";"); //这是一字符串,分割
-                            for(var Combstr in strs)
-                            {
-                                if(strs[Combstr] == CellNode.attributes["Value"].value)
-                                    Htmlstr+="<option selected='selected' value="+Combstr+">" + strs[Combstr] + "</option>";
-                                else
-                                    Htmlstr+="<option value="+Combstr+">" + strs[Combstr] + "</option>"
+                        Htmlstr += "<input type='text'   size=\"" + (CellNode.attributes['Value'].value.length - 3) + "\"  value='" + CellNode.attributes['Value'].value + "' onchange='HasChangeValue(this)'"
+                        if (CellNode.hasAttribute('Enable'))
+                            if (CellNode.attributes["Enable"].value == "0") {
+                                Htmlstr += "  readonly=\"true\" style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
                             }
-                            Htmlstr+="</select>"
-                        }else{
-                            Htmlstr+="<input type='text'   size=\""+(CellNode.attributes['Value'].value.length-3)+"\"  value='"  +CellNode.attributes['Value'].value +"' onchange='HasChangeValue(this)'"
-                            if(CellNode.hasAttribute('Mode'))
-                                if (CellNode.attributes["Mode"].value == "ReadOnly")
-                                {
-                                    Htmlstr+="  readonly=\"true\" style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
-                                }
-                            Htmlstr+="></input>";
+                        Htmlstr += "></input>";
+                        break;
+                    case "Combo":
+                        Htmlstr += "<select onchange='HasChangeValue(this)'>"
+                        var strs = CellNode.attributes["Combo"].value.split(";"); //这是一字符串,分割
+                        for (var Combstr in strs) {
+                            if (strs[Combstr] == CellNode.attributes["Value"].value)
+                                Htmlstr += "<option selected='selected' value=" + Combstr + ">" + strs[Combstr] + "</option>";
+                            else
+                                Htmlstr += "<option value=" + Combstr + ">" + strs[Combstr] + "</option>"
                         }
+                        Htmlstr += "</select>"
                         break;
                     case "Number":
-                        Htmlstr+="<input type='number'   style='width:60px' value="  +CellNode.attributes['Value'].value + " onchange='HasChangeValue(this)' ";
-                        if(CellNode.hasAttribute('Mode'))
-                            if (CellNode.attributes["Mode"].value == "ReadOnly")
-                            {
-                                Htmlstr+="  readonly=\"true\" style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
+                        Htmlstr += "<input type='number'   style='width:60px' value=" + CellNode.attributes['Value'].value + " onchange='HasChangeValue(this)' ";
+                        if (CellNode.hasAttribute('Enable'))
+                            if (CellNode.attributes["Enable"].value == "0") {
+                                Htmlstr += "  disabled=\"true\"　  style=\"overflow-x:visible;overflow-y:visible;background:#CCCCCC;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;padding-bottom: 2px;padding-top: 2px;margin-left: 3px;\" "
                             }
-                        Htmlstr+="></input>";
+                        Htmlstr += "></input>";
                         break;
-                    case "Bool":
-                        if(CellNode.attributes['Value'].value == "True")
-                            Htmlstr+="<input type='checkbox' checked=true onchange='HasChangeValue(this)'></input>"
+                    case "Boolean":
+                        if (CellNode.attributes['Value'].value == "True")
+                            Htmlstr += "<input type='checkbox' checked=true onchange='HasChangeValue(this)'></input>"
                         else
-                            Htmlstr+="<input type='checkbox' onchange='HasChangeValue(this)'></input>"
+                            Htmlstr += "<input type='checkbox' onchange='HasChangeValue(this)'></input>"
                         break;
                     default:
                         console.log("no this Type:" + CellNode.attributes["Type"].value);
@@ -152,7 +147,7 @@
             switch (element.tagName)
             {
                 case "SELECT":
-                    str += "Type=\"String\" "
+                    str += "Type=\"Combo\" "
                     str += "Value=\"" + element.options[element.selectedIndex].text + "\" ";
                     str += "Combo=\"";
                     for(var i = 0 ; i< element.length ;i++)
@@ -171,7 +166,7 @@
                             str += "Value=\"" + element.value +"\" ";
                             break;
                         case "checkbox":
-                            str += "Type=\"Bool\" "
+                            str += "Type=\"Boolean\" "
                             if(element.checked == true)
                                 str += "Value=\"True\" ";
                             else

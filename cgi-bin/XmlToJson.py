@@ -31,7 +31,7 @@ for key in json_dict:
     f=open('/tmp/temp.xml', 'w')
     f.write(xmlstr);
     f.close();
-    os.system("/home/root/bin/XiXmlDevice set /tmp/temp.xml > /dev/null")
+    os.system("/home/root/bin/XmlDevice set /tmp/temp.xml > /dev/null")
 
 os.system("/home/root/bin/XiXmlDevice get /home/root/config/camera.xml > /dev/null")
 

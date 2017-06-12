@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
 </head>
 <body>
 
@@ -10,7 +11,7 @@
 
 <div style="position:relative;">
 
-    　　<img src="" id="display_images" style="display:block;width:100%;height:100%"/>
+    　　<img src="" id="display_images" style="display:block;width:100%;height:100%" onclick=""/>
 
     　　<div id="imageMsg" style="position:absolute; z-index:0; left:0px; top:0px">图片大小</div>
 
@@ -68,8 +69,26 @@
         }
     }
 
-    var surl = "../image0.bmp";
-    loadImage('display_images',surl,loadResult);
+    function getNewPicture() {
+        $.ajax({
+            url:'/cgi-bin/flushPicture.sh',
+            type:'POST',
+            dataType:'json',
+            timeout:1000,
+            cache:false,
+            error:function (xml) {
+                alert("刷新图片失败！");
+            },
+            success:pictureOnchick()
+        });
+    }
+
+
+    function pictureOnchick(){
+        var surl = "../image.bmp";
+        loadImage('display_images',surl,loadResult);
+    }
+    pictureOnchick();
 </script>
 
 </body>
